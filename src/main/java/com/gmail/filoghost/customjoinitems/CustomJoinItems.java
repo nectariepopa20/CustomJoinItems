@@ -104,26 +104,29 @@ extends JavaPlugin {
                 ErrorLogger.addError("The item \"" + internalName + "\" has no name!");
                 continue;
             }
-            if (!itemNode.isSet("id")) {
-                ErrorLogger.addError("The item \"" + internalName + "\" has no ID!");
+            if (!itemNode.isSet("material")) {
+                ErrorLogger.addError("The item \"" + internalName + "\" has no material! Use 'material: MATERIAL_NAME' (e.g. BONE, BOOK).");
                 continue;
             }
-            if (itemNode.getInt("id") == 0 || Material.getMaterial(String.valueOf(itemNode.getInt("id"))) == null) {
-                ErrorLogger.addError("The item \"" + internalName + "\" has an invalid item ID: " + itemNode.getInt("id") + ".");
+            String materialName = itemNode.getString("material").trim().toUpperCase().replace(" ", "_");
+            Material material = Material.getMaterial(materialName);
+            if (material == null || !material.isItem()) {
+                ErrorLogger.addError("The item \"" + internalName + "\" has an invalid material: \"" + itemNode.getString("material") + "\". Use a valid 1.13+ material name (e.g. BONE, BOOK, IRON_INGOT).");
                 continue;
             }
-            Material material = Material.getMaterial(String.valueOf(itemNode.getInt("id")));
             String command = itemNode.getString("command");
             String name = itemNode.getString("name");
             String permission = itemNode.getString("permission");
             Integer slot = itemNode.getInt("slot");
-            Short dataValue = (short)itemNode.getInt("data-value");
+            Short dataValue = itemNode.isSet("data-value") ? (short) itemNode.getInt("data-value") : null;
             JoinItem item = new JoinItem(material);
             item.setCommands(ItemCommand.arrayFromString(command));
             item.setPerm(permission);
             item.setSlot(slot);
             item.setCustomName(name);
-            item.setDataValue(dataValue);
+            if (dataValue != null) {
+                item.setDataValue(dataValue);
+            }
             if (itemNode.isSet("lore") && itemNode.isList("lore")) {
                 item.setLore(itemNode.getStringList("lore"));
             }

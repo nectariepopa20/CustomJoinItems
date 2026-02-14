@@ -308,7 +308,8 @@ public class Updater {
             String version = this.plugin.getDescription().getVersion();
             if (title.split(" v").length == 2) {
                 String remoteVersion = title.split(" v")[1].split(" ")[0];
-                if (this.hasTag(version) || version.equalsIgnoreCase(remoteVersion)) {
+                // No update if we're on a dev build, or if current >= remote (semantic version compare)
+                if (this.hasTag(version) || !isRemoteNewer(remoteVersion, version)) {
                     this.result = UpdateResult.NO_UPDATE;
                     return false;
                 }
@@ -322,6 +323,32 @@ public class Updater {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns true only when remote is strictly newer than current (e.g. remote 2.1 vs current 2.0).
+     * Uses semantic version comparison so "2.0" > "1.5.2".
+     */
+    private boolean isRemoteNewer(String remoteVersion, String currentVersion) {
+        try {
+            String[] remoteParts = remoteVersion.split("\\.");
+            String[] currentParts = currentVersion.split("\\.");
+            int maxLen = Math.max(remoteParts.length, currentParts.length);
+            for (int i = 0; i < maxLen; i++) {
+                int r = i < remoteParts.length ? parseVersionPart(remoteParts[i]) : 0;
+                int c = i < currentParts.length ? parseVersionPart(currentParts[i]) : 0;
+                if (r > c) return true;
+                if (r < c) return false;
+            }
+            return false; // same version
+        } catch (Exception e) {
+            return false; // on parse error, don't treat as update
+        }
+    }
+
+    private int parseVersionPart(String part) {
+        part = part.replaceAll("[^0-9].*", ""); // strip suffix like "-SNAPSHOT"
+        return part.isEmpty() ? 0 : Integer.parseInt(part);
     }
 
     private boolean hasTag(String version) {

@@ -1,6 +1,9 @@
+# CustomJoinItems - define items given on join
+# Use 1.13+ material names (e.g. BONE, BOOK, IRON_INGOT). See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+
 first-item:
   name: '&aTest Item'
-  id: 345
+  material: NETHER_WART
   slot: 9
   lore:
     - '&7This item is given on join to people with'
@@ -16,7 +19,7 @@ first-item:
   permission: 'customjoinitems.test'
 second-item:
   name: '&cAnother Item'
-  id: 352
+  material: BONE
   lore:
     - '&7If you don''t set the permission, the item'
     - '&7will be given to everyone. If you don''t'
@@ -26,9 +29,8 @@ second-item:
   cooldown-seconds: 5
 all-the-possible-nodes:
   name: '&eConfig Item'
-  id: 339
+  material: BOOK
   slot: 1
-  data-value: 0
   lore:
     - '&7This item contains all the existing config nodes.'
     - '&7Open items.yml to see it.'

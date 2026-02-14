@@ -12,8 +12,8 @@ ITEMS.YML FORMAT
 Each item is a section with a unique key (e.g. "first-item"):
 
   name: '&aDisplay name'     # Color codes: &a green, &c red, etc.
-  id: 345                     # Material ID (legacy) or use material name
-  slot: 9                     # Hotbar slot 1-9 (optional)
+  material: BONE             # 1.13+ material name (e.g. BONE, BOOK, IRON_INGOT)
+  slot: 9                    # Hotbar slot 1-9 (optional)
   lore:                       # Lines shown on the item (optional)
     - '&7Line 1'
     - '&7Line 2'
