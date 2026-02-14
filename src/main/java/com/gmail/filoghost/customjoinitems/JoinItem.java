@@ -6,6 +6,7 @@ import com.gmail.filoghost.customjoinitems.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +30,8 @@ public class JoinItem {
     private List<String> playersInCooldown = new ArrayList<String>();
     private boolean giveOnWorldChange;
     private List<String> removeInWorlds = new ArrayList<String>();
+    /** Unique ID used for CustomModelData so we can match items reliably on Paper/Leaf (remapping). */
+    private int matchId = -1;
 
     public JoinItem(Material mat) {
         this.material = mat;
@@ -77,14 +80,32 @@ public class JoinItem {
         this.permission = permission == null || permission.length() == 0 ? null : permission;
     }
 
+    public void setMatchId(int matchId) {
+        this.matchId = matchId;
+    }
+
     public boolean isSimilar(ItemStack item) {
         if (item == null) {
             return false;
         }
-        if (item.getType() != this.material) {
-            return false;
-        }
         ItemMeta meta = item.getItemMeta();
+        if (meta != null && this.matchId >= 0 && meta.hasCustomModelData() && meta.getCustomModelData() == this.matchId) {
+            return true;
+        }
+        // Fallback: compare by material (by key on remapped servers) and display name
+        Material itemType = item.getType();
+        if (itemType != this.material) {
+            try {
+                if (!itemType.getKey().getKey().equals(this.material.getKey().getKey())) {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        if (meta == null) {
+            return this.customName == null && this.lore == null;
+        }
         if (this.customName == null) {
             if (meta.hasDisplayName()) {
                 return false;
@@ -93,11 +114,16 @@ public class JoinItem {
             if (!meta.hasDisplayName()) {
                 return false;
             }
-            if (!meta.getDisplayName().equals(this.customName)) {
-                return false;
+            String itemName = meta.getDisplayName();
+            if (!this.customName.equals(itemName)) {
+                String plainOurs = ChatColor.stripColor(this.customName);
+                String plainTheirs = ChatColor.stripColor(itemName);
+                if (plainOurs == null || plainTheirs == null || !plainOurs.equals(plainTheirs)) {
+                    return false;
+                }
             }
         }
-        return this.dataValue == null || this.dataValue.shortValue() == item.getDurability();
+        return this.dataValue == null || item.getDurability() == this.dataValue.shortValue();
     }
 
     public void removeFrom(Player player) {
@@ -164,13 +190,18 @@ public class JoinItem {
             item.setDurability(this.dataValue.shortValue());
         }
         ItemMeta meta = item.getItemMeta();
-        if (this.customName != null) {
-            meta.setDisplayName(this.customName);
+        if (meta != null) {
+            if (this.matchId >= 0) {
+                meta.setCustomModelData(this.matchId);
+            }
+            if (this.customName != null) {
+                meta.setDisplayName(this.customName);
+            }
+            if (this.lore != null) {
+                meta.setLore(this.lore);
+            }
+            item.setItemMeta(meta);
         }
-        if (this.lore != null) {
-            meta.setLore(this.lore);
-        }
-        item.setItemMeta(meta);
         if (this.slot != null) {
             ItemStack previous = inv.getItem(this.slot.intValue());
             inv.setItem(this.slot.intValue(), item);

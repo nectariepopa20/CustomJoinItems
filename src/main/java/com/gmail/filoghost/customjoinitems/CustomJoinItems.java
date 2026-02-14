@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -108,10 +110,14 @@ extends JavaPlugin {
                 ErrorLogger.addError("The item \"" + internalName + "\" has no material! Use 'material: MATERIAL_NAME' (e.g. BONE, BOOK).");
                 continue;
             }
-            String materialName = itemNode.getString("material").trim().toUpperCase().replace(" ", "_");
-            Material material = Material.getMaterial(materialName);
-            if (material == null || !material.isItem()) {
-                ErrorLogger.addError("The item \"" + internalName + "\" has an invalid material: \"" + itemNode.getString("material") + "\". Use a valid 1.13+ material name (e.g. BONE, BOOK, IRON_INGOT).");
+            String materialInput = itemNode.getString("material").trim();
+            // Strip minecraft: prefix if present (e.g. minecraft:copper_sword)
+            if (materialInput.toLowerCase().startsWith("minecraft:")) {
+                materialInput = materialInput.substring(10).trim();
+            }
+            Material material = resolveMaterial(materialInput);
+            if (material == null || material == Material.AIR) {
+                ErrorLogger.addError("The item \"" + internalName + "\" has an invalid material: \"" + itemNode.getString("material") + "\". Use a valid 1.13+ material name (e.g. BONE, COPPER_SWORD, RED_BED).");
                 continue;
             }
             String command = itemNode.getString("command");
@@ -143,9 +149,40 @@ extends JavaPlugin {
                 List<String> disabledWorldsList = Arrays.asList(disabledWorlds.replace(" ", "").split(","));
                 item.setDisabledWorlds(disabledWorldsList);
             }
+            item.setMatchId(items.size());
             items.add(item);
         }
         ErrorLogger.printErrors();
+    }
+
+    /**
+     * Resolves a material name (e.g. COPPER_SWORD, copper_sword, minecraft:copper_sword) to Material.
+     * Uses Registry.MATERIAL by NamespacedKey first (works with Paper/Leaf remapping), then fallbacks.
+     */
+    private static Material resolveMaterial(String input) {
+        if (input == null || input.isEmpty()) return null;
+        String raw = input.trim();
+        String keyPart = raw.toLowerCase().replace(" ", "_");
+        if (keyPart.startsWith("minecraft:")) {
+            keyPart = keyPart.substring(10);
+        }
+        // 1) Registry lookup by minecraft key (stable; works with remapped servers like Leaf)
+        try {
+            Material m = Registry.MATERIAL.get(NamespacedKey.minecraft(keyPart));
+            if (m != null) return m;
+        } catch (Exception ignored) { }
+        // 2) matchMaterial / getMaterial
+        Material m = Material.matchMaterial(raw);
+        if (m != null) return m;
+        m = Material.getMaterial(raw.toUpperCase().replace(" ", "_"));
+        if (m != null) return m;
+        // 3) Iterate by key (getKey().getKey() is stable)
+        for (Material mat : Material.values()) {
+            try {
+                if (mat.getKey().getKey().equals(keyPart)) return mat;
+            } catch (Exception ignored) { }
+        }
+        return null;
     }
 
     public static FileConfiguration loadFile(String path) {
