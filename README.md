@@ -10,7 +10,7 @@ Spigot plugin that gives custom items to players when they join the server.
 mvn clean package -DskipTests
 ```
 
-Output: `target/CustomJoinItems-1.5.2.jar`
+Output: `target/CustomJoinItems-2.0.jar`
 
 ## Requirements
 

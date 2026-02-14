@@ -90,7 +90,11 @@ extends JavaPlugin {
     public static void load() {
         Configuration.load();
         items = new ArrayList<JoinItem>();
-        plugin.saveResource("tutorial.txt", true);
+        try {
+            plugin.saveResource("tutorial.txt", true);
+        } catch (IllegalArgumentException ignored) {
+            // tutorial.txt not in JAR - optional resource
+        }
         FileConfiguration itemsConfig = CustomJoinItems.loadFile("items.yml");
         Set<String> keys = itemsConfig.getKeys(false);
         for (String internalName : keys) {

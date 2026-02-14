@@ -1,6 +1,6 @@
 name: CustomJoinItems
 main: com.gmail.filoghost.customjoinitems.CustomJoinItems
-version: 1.5.2
+version: 2.0
 
 commands:
   customjoinitems:

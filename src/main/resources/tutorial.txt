@@ -1,0 +1,38 @@
+============================================
+     CustomJoinItems - Quick Tutorial
+============================================
+
+CONFIGURATION
+-------------
+- config.yml: update-notifications, clear-inventory-on-join
+- items.yml: define items given to players when they join
+
+ITEMS.YML FORMAT
+----------------
+Each item is a section with a unique key (e.g. "first-item"):
+
+  name: '&aDisplay name'     # Color codes: &a green, &c red, etc.
+  id: 345                     # Material ID (legacy) or use material name
+  slot: 9                     # Hotbar slot 1-9 (optional)
+  lore:                       # Lines shown on the item (optional)
+    - '&7Line 1'
+    - '&7Line 2'
+  command: 'say Hello'        # Command run when item is used
+  permission: 'customjoinitems.example'  # Who gets the item (optional)
+  cooldown-seconds: 5         # Cooldown between uses
+  give-at-respawn: false      # Give again on respawn (optional)
+  first-join-only: false     # Only on first join (optional)
+  allow-drop: true           # Can player drop it (optional)
+  disabled-worlds: world_nether  # Worlds where item is not given (optional)
+
+COMMANDS
+--------
+/customjoinitems or /cji (permission: customjoinitems.admin)
+- Opens the plugin GUI / reloads config (see in-game)
+
+PERMISSIONS
+-----------
+customjoinitems.admin - Use main command
+customjoinitems.<item-permission> - Receive specific items (set in items.yml)
+
+============================================
