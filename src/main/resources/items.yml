@@ -1,0 +1,43 @@
+first-item:
+  name: '&aTest Item'
+  id: 345
+  slot: 9
+  lore:
+    - '&7This item is given on join to people with'
+    - '&7the permission &ecustomjoinitems.test&7 .'
+    - '&7They still need the standard permission'
+    - '&7to execute the command. A normal user'
+    - '&7shouldn''t be able to use &d/say&7. If'
+    - '&7you specify a slot (1-9), the item will'
+    - '&7be placed in that slot, moving an eventual'
+    - '&7existing item to the first empty slot.'
+  command: 'say This is just a test.'
+  cooldown-seconds: 5
+  permission: 'customjoinitems.test'
+second-item:
+  name: '&cAnother Item'
+  id: 352
+  lore:
+    - '&7If you don''t set the permission, the item'
+    - '&7will be given to everyone. If you don''t'
+    - '&7specify a slot, the item will be in the'
+    - '&7first empty.'
+  command: 'me Hello, I''m new to this server!'
+  cooldown-seconds: 5
+all-the-possible-nodes:
+  name: '&eConfig Item'
+  id: 339
+  slot: 1
+  data-value: 0
+  lore:
+    - '&7This item contains all the existing config nodes.'
+    - '&7Open items.yml to see it.'
+  command: 'console: tell %player% This is; console: tell %player% a test.'
+  permission: 'customjoinitems.admin'
+  cooldown-seconds: 5
+  give-at-respawn: true
+  first-join-only: false
+  allow-drop: false
+  block-movement: false
+  disabled-worlds: world_nether, world_the_end
+  give-on-world-change: true

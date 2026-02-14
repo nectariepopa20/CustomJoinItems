@@ -1,0 +1,11 @@
+name: CustomJoinItems
+main: com.gmail.filoghost.customjoinitems.CustomJoinItems
+version: 1.5.2
+
+commands:
+  customjoinitems:
+    description: CustomJoinItems main command.
+    usage: /<command>
+    permission: customjoinitems.admin
+    permission-message: You don't have permission.
+    aliases: [cji]
