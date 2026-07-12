@@ -2,7 +2,7 @@
 
 Spigot plugin that gives custom items to players when they join the server.
 
-**Built for Spigot 1.21.1**
+**Built for Paper 26.1.2**
 
 ## Build
 
@@ -10,7 +10,7 @@ Spigot plugin that gives custom items to players when they join the server.
 mvn clean package -DskipTests
 ```
 
-Output: `target/CustomJoinItems-2.0.jar`
+Output: `target/CustomJoinItems-2.1.0.jar`
 
 ## Configuration
 
@@ -18,8 +18,8 @@ Items are defined in `items.yml` using **1.13+ material names** (e.g. `material:
 
 ## Requirements
 
-- Java 21+
-- Spigot 1.21.1 (or Paper 1.21.x)
+- Java 25+
+- Paper 26.1.2+
 
 ## Installation
 

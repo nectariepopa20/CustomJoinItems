@@ -1,6 +1,8 @@
 name: CustomJoinItems
 main: com.gmail.filoghost.customjoinitems.CustomJoinItems
-version: 2.0
+version: 2.1.0
+description: Gives configurable custom items to players when they join.
+api-version: '26.1.2'
 
 commands:
   customjoinitems:
