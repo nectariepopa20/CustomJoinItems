@@ -14,6 +14,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class JoinItem {
+    private String id;
     private Material material;
     private ItemCommand[] commands;
     private Short dataValue = null;
@@ -39,6 +40,39 @@ public class JoinItem {
 
     public String getCustomName() {
         return this.customName;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * Creates a detached copy of this configured item. This does not give the
+     * item to a player and is safe for integrations such as NPC displays.
+     */
+    public ItemStack createItemStack() {
+        ItemStack item = new ItemStack(this.material);
+        if (this.dataValue != null) {
+            item.setDurability(this.dataValue.shortValue());
+        }
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            if (this.matchId >= 0) {
+                meta.setCustomModelData(this.matchId);
+            }
+            if (this.customName != null) {
+                meta.setDisplayName(this.customName);
+            }
+            if (this.lore != null) {
+                meta.setLore(this.lore);
+            }
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 
     public void setCustomName(String customName) {
@@ -185,23 +219,7 @@ public class JoinItem {
             }
             ++n2;
         }
-        ItemStack item = new ItemStack(this.material);
-        if (this.dataValue != null) {
-            item.setDurability(this.dataValue.shortValue());
-        }
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            if (this.matchId >= 0) {
-                meta.setCustomModelData(this.matchId);
-            }
-            if (this.customName != null) {
-                meta.setDisplayName(this.customName);
-            }
-            if (this.lore != null) {
-                meta.setLore(this.lore);
-            }
-            item.setItemMeta(meta);
-        }
+        ItemStack item = this.createItemStack();
         if (this.slot != null) {
             ItemStack previous = inv.getItem(this.slot.intValue());
             inv.setItem(this.slot.intValue(), item);
@@ -336,4 +354,3 @@ public class JoinItem {
         }, (long)(this.cooldownSeconds * 20));
     }
 }
-

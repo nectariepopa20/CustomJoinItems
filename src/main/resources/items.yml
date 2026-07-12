@@ -17,6 +17,13 @@ first-item:
   command: 'say This is just a test.'
   cooldown-seconds: 5
   permission: 'customjoinitems.test'
+lobby-compass:
+  name: '&eLobby Navigator'
+  material: COMPASS
+  slot: 1
+  lore:
+    - '&7A lobby item usable by integrations.'
+  command: ''
 second-item:
   name: '&cAnother Item'
   material: BONE

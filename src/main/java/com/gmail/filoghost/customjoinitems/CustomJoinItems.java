@@ -126,6 +126,7 @@ extends JavaPlugin {
             Integer slot = itemNode.getInt("slot");
             Short dataValue = itemNode.isSet("data-value") ? (short) itemNode.getInt("data-value") : null;
             JoinItem item = new JoinItem(material);
+            item.setId(internalName);
             item.setCommands(ItemCommand.arrayFromString(command));
             item.setPerm(permission);
             item.setSlot(slot);
@@ -203,5 +204,20 @@ extends JavaPlugin {
         YamlConfiguration config = YamlConfiguration.loadConfiguration((File)file);
         return config;
     }
-}
 
+    /**
+     * Returns a detached configured item copy by its top-level items.yml key.
+     * This API has no effect on the inventories or commands of real players.
+     */
+    public static org.bukkit.inventory.ItemStack getItemStack(String internalName) {
+        if (internalName == null) {
+            return null;
+        }
+        for (JoinItem item : items) {
+            if (internalName.equalsIgnoreCase(item.getId())) {
+                return item.createItemStack();
+            }
+        }
+        return null;
+    }
+}
